@@ -80,6 +80,22 @@
         th {
             background-color: #f2f2f2;
         }
+
+        /* 新增删除按钮样式 */
+        .delete-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        .delete-btn:hover {
+            background: #cc0000;
+        }
     </style>
 </head>
 <body>
@@ -93,7 +109,7 @@
                 <button onclick="addItem('leader-visits')">添加记录</button>
             </div>
             <table>
-                <thead><tr><th>时间</th><th>内容</th></tr></thead>
+                <thead><tr><th>时间</th><th>内容</th><th>操作</th></tr></thead>
                 <tbody class="data-body"></tbody>
             </table>
         </div>
@@ -107,7 +123,7 @@
                 <button onclick="addItem('media-reports')">添加记录</button>
             </div>
             <table>
-                <thead><tr><th>时间</th><th>内容</th></tr></thead>
+                <thead><tr><th>时间</th><th>内容</th><th>操作</th></tr></thead>
                 <tbody class="data-body"></tbody>
             </table>
         </div>
@@ -121,7 +137,7 @@
                 <button onclick="addItem('important-meetings')">添加记录</button>
             </div>
             <table>
-                <thead><tr><th>时间</th><th>内容</th></tr></thead>
+                <thead><tr><th>时间</th><th>内容</th><th>操作</th></tr></thead>
                 <tbody class="data-body"></tbody>
             </table>
         </div>
@@ -135,7 +151,7 @@
                 <button onclick="addItem('innovation-activities')">添加记录</button>
             </div>
             <table>
-                <thead><tr><th>时间</th><th>内容</th></tr></thead>
+                <thead><tr><th>时间</th><th>内容</th><th>操作</th></tr></thead>
                 <tbody class="data-body"></tbody>
             </table>
         </div>
@@ -149,7 +165,7 @@
                 <button onclick="addItem('publications')">添加记录</button>
             </div>
             <table>
-                <thead><tr><th>时间</th><th>内容</th></tr></thead>
+                <thead><tr><th>时间</th><th>内容</th><th>操作</th></tr></thead>
                 <tbody class="data-body"></tbody>
             </table>
         </div>
@@ -193,13 +209,28 @@
             container.querySelector('.content-input').value = '';
         }
 
+        // 删除条目
+        function deleteItem(category, index) {
+            if (confirm('确定要删除这条记录吗？')) {
+                data[category].splice(index, 1);
+                saveData();
+                renderTable(category);
+            }
+        }
+
         // 渲染表格
         function renderTable(category) {
             const tbody = document.querySelector(`#${category} .data-body`);
-            tbody.innerHTML = data[category].map(item => `
+            tbody.innerHTML = data[category].map((item, index) => `
                 <tr>
                     <td>${item.time}</td>
                     <td>${item.content}</td>
+                    <td>
+                        <button class="delete-btn" 
+                                onclick="deleteItem('${category}', ${index})">
+                            删除
+                        </button>
+                    </td>
                 </tr>
             `).join('');
         }
