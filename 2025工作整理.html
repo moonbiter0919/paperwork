@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>年度工作内容整理</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .category {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #333;
+            margin: 0 0 15px 0;
+            font-size: 1.1em;
+        }
+
+        .input-group {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 6px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 领导来访 -->
+        <div class="category" id="leader-visits">
+            <h2>领导来访</h2>
+            <div class="input-group">
+                <input type="date" class="time-input">
+                <input type="text" class="content-input" placeholder="来访详情">
+                <button onclick="addItem('leader-visits')">添加记录</button>
+            </div>
+            <table>
+                <thead><tr><th>时间</th><th>内容</th></tr></thead>
+                <tbody class="data-body"></tbody>
+            </table>
+        </div>
+
+        <!-- 媒体报道 -->
+        <div class="category" id="media-reports">
+            <h2>媒体报道</h2>
+            <div class="input-group">
+                <input type="date" class="time-input">
+                <input type="text" class="content-input" placeholder="报道标题">
+                <button onclick="addItem('media-reports')">添加记录</button>
+            </div>
+            <table>
+                <thead><tr><th>时间</th><th>内容</th></tr></thead>
+                <tbody class="data-body"></tbody>
+            </table>
+        </div>
+
+        <!-- 重大会议 -->
+        <div class="category" id="important-meetings">
+            <h2>重大会议</h2>
+            <div class="input-group">
+                <input type="date" class="time-input">
+                <input type="text" class="content-input" placeholder="会议主题">
+                <button onclick="addItem('important-meetings')">添加记录</button>
+            </div>
+            <table>
+                <thead><tr><th>时间</th><th>内容</th></tr></thead>
+                <tbody class="data-body"></tbody>
+            </table>
+        </div>
+
+        <!-- 创新活动 -->
+        <div class="category" id="innovation-activities">
+            <h2>创新活动</h2>
+            <div class="input-group">
+                <input type="date" class="time-input">
+                <input type="text" class="content-input" placeholder="活动内容">
+                <button onclick="addItem('innovation-activities')">添加记录</button>
+            </div>
+            <table>
+                <thead><tr><th>时间</th><th>内容</th></tr></thead>
+                <tbody class="data-body"></tbody>
+            </table>
+        </div>
+
+        <!-- 公众号发布 -->
+        <div class="category" id="publications">
+            <h2>公众号发布</h2>
+            <div class="input-group">
+                <input type="date" class="time-input">
+                <input type="text" class="content-input" placeholder="发布内容">
+                <button onclick="addItem('publications')">添加记录</button>
+            </div>
+            <table>
+                <thead><tr><th>时间</th><th>内容</th></tr></thead>
+                <tbody class="data-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 初始化本地存储
+        let storage = localStorage.getItem('workData');
+        let data = storage ? JSON.parse(storage) : {
+            'leader-visits': [],
+            'media-reports': [],
+            'important-meetings': [],
+            'innovation-activities': [],
+            'publications': []
+        };
+
+        // 页面加载时渲染数据
+        window.onload = () => {
+            Object.keys(data).forEach(category => {
+                renderTable(category);
+            });
+        };
+
+        // 添加条目
+        function addItem(category) {
+            const container = document.getElementById(category);
+            const time = container.querySelector('.time-input').value;
+            const content = container.querySelector('.content-input').value;
+            
+            if (!time || !content) {
+                alert('请填写完整信息');
+                return;
+            }
+
+            data[category].push({ time, content });
+            saveData();
+            renderTable(category);
+            
+            // 清空输入
+            container.querySelector('.time-input').value = '';
+            container.querySelector('.content-input').value = '';
+        }
+
+        // 渲染表格
+        function renderTable(category) {
+            const tbody = document.querySelector(`#${category} .data-body`);
+            tbody.innerHTML = data[category].map(item => `
+                <tr>
+                    <td>${item.time}</td>
+                    <td>${item.content}</td>
+                </tr>
+            `).join('');
+        }
+
+        // 保存数据
+        function saveData() {
+            localStorage.setItem('workData', JSON.stringify(data));
+        }
+    </script>
+</body>
+</html>
