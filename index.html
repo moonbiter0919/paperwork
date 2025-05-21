@@ -1,244 +1,226 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>年度工作内容整理</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>工作日程表</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #f5f5f5;
-            max-width: 1200px;
-            margin: 0 auto;
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background-color: #f4f7fa;
+        margin: 0;
+        padding: 10px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        font-size: 1.4em;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+        background-color: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      input[type="text"],
+      input[type="date"] {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 1em;
+      }
+
+      button {
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s;
+      }
+
+      button.add-btn {
+        background-color: #28a745;
+        color: white;
+      }
+
+      button.add-btn:hover {
+        background-color: #218838;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        margin-top: 10px;
+      }
+
+      th,
+      td {
+        text-align: center;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        font-size: 0.9em;
+      }
+
+      th {
+        background-color: #007bff;
+        color: white;
+      }
+
+      /* 移动端适配 - 卡片视图 */
+      @media (max-width: 600px) {
+        thead {
+          display: none;
         }
 
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+        .table-container {
+          display: block;
         }
 
-        .category {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        tbody tr {
+          display: block;
+          border-bottom: 1px solid #ddd;
+          margin-bottom: 10px;
+          background-color: white;
+          padding: 10px;
+          border-radius: 8px;
         }
 
-        h2 {
-            color: #333;
-            margin: 0 0 15px 0;
-            font-size: 1.1em;
+        tbody td {
+          display: flex;
+          justify-content: space-between;
+          padding: 5px 0;
+          border: none;
+          text-align: left;
         }
 
-        .input-group {
-            display: grid;
-            gap: 8px;
-            margin-bottom: 15px;
+        tbody td::before {
+          content: attr(data-label);
+          font-weight: bold;
+          color: #555;
         }
+      }
 
-        input[type="date"] {
-            width: 100%;
-            padding: 6px;
-        }
+      .delete-btn {
+        background-color: #dc3545;
+        color: white;
+        margin-top: 5px;
+        width: 100%;
+      }
 
-        input[type="text"] {
-            width: 100%;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-
-        button:hover {
-            background: #45a049;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 0.9em;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        /* 新增删除按钮样式 */
-        .delete-btn {
-            background: #ff4444;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 0.8em;
-            margin-left: 5px;
-        }
-
-        .delete-btn:hover {
-            background: #cc0000;
-        }
+      .delete-btn:hover {
+        background-color: #c82333;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <!-- 领导来访 -->
-        <div class="category" id="leader-visits">
-            <h2>领导来访</h2>
-            <div class="input-group">
-                <input type="date" class="time-input">
-                <input type="text" class="content-input" placeholder="来访详情">
-                <button onclick="addItem('leader-visits')">添加记录</button>
-            </div>
-            <table>
-                <thead><tr><th>时间</th><th>内容</th><th>操作</th></tr></thead>
-                <tbody class="data-body"></tbody>
-            </table>
-        </div>
+  </head>
+  <body>
+    <h1>我的工作日程表</h1>
 
-        <!-- 媒体报道 -->
-        <div class="category" id="media-reports">
-            <h2>媒体报道</h2>
-            <div class="input-group">
-                <input type="date" class="time-input">
-                <input type="text" class="content-input" placeholder="报道标题">
-                <button onclick="addItem('media-reports')">添加记录</button>
-            </div>
-            <table>
-                <thead><tr><th>时间</th><th>内容</th><th>操作</th></tr></thead>
-                <tbody class="data-body"></tbody>
-            </table>
-        </div>
+    <form id="schedule-form">
+      <input type="date" id="acceptDate" required />
+      <input type="text" id="content" placeholder="主要内容" required />
+      <input type="text" id="location" placeholder="拍摄地点" required />
+      <input type="date" id="deadline" required />
+      <input type="text" id="income" placeholder="收入" required />
+      <button type="submit" class="add-btn">添加</button>
+    </form>
 
-        <!-- 重大会议 -->
-        <div class="category" id="important-meetings">
-            <h2>重大会议</h2>
-            <div class="input-group">
-                <input type="date" class="time-input">
-                <input type="text" class="content-input" placeholder="会议主题">
-                <button onclick="addItem('important-meetings')">添加记录</button>
-            </div>
-            <table>
-                <thead><tr><th>时间</th><th>内容</th><th>操作</th></tr></thead>
-                <tbody class="data-body"></tbody>
-            </table>
-        </div>
-
-        <!-- 创新活动 -->
-        <div class="category" id="innovation-activities">
-            <h2>创新活动</h2>
-            <div class="input-group">
-                <input type="date" class="time-input">
-                <input type="text" class="content-input" placeholder="活动内容">
-                <button onclick="addItem('innovation-activities')">添加记录</button>
-            </div>
-            <table>
-                <thead><tr><th>时间</th><th>内容</th><th>操作</th></tr></thead>
-                <tbody class="data-body"></tbody>
-            </table>
-        </div>
-
-        <!-- 公众号发布 -->
-        <div class="category" id="publications">
-            <h2>公众号发布</h2>
-            <div class="input-group">
-                <input type="date" class="time-input">
-                <input type="text" class="content-input" placeholder="发布内容">
-                <button onclick="addItem('publications')">添加记录</button>
-            </div>
-            <table>
-                <thead><tr><th>时间</th><th>内容</th><th>操作</th></tr></thead>
-                <tbody class="data-body"></tbody>
-            </table>
-        </div>
+    <div class="table-container">
+      <table id="schedule-table">
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th>接受时间</th>
+            <th>主要内容</th>
+            <th>拍摄地点</th>
+            <th>交稿日期</th>
+            <th>收入</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
 
     <script>
-        // 初始化本地存储
-        let storage = localStorage.getItem('workData');
-        let data = storage ? JSON.parse(storage) : {
-            'leader-visits': [],
-            'media-reports': [],
-            'important-meetings': [],
-            'innovation-activities': [],
-            'publications': []
-        };
+      const form = document.getElementById("schedule-form");
+      const tbody = document.querySelector("#schedule-table tbody");
 
-        // 页面加载时渲染数据
-        window.onload = () => {
-            Object.keys(data).forEach(category => {
-                renderTable(category);
-            });
-        };
+      const STORAGE_KEY = "work_schedule";
+      let scheduleData = [];
 
-        // 添加条目
-        function addItem(category) {
-            const container = document.getElementById(category);
-            const time = container.querySelector('.time-input').value;
-            const content = container.querySelector('.content-input').value;
-            
-            if (!time || !content) {
-                alert('请填写完整信息');
-                return;
-            }
+      function loadData() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          scheduleData = JSON.parse(saved);
+          renderTable();
+        }
+      }
 
-            data[category].push({ time, content });
-            saveData();
-            renderTable(category);
-            
-            // 清空输入
-            container.querySelector('.time-input').value = '';
-            container.querySelector('.content-input').value = '';
+      function saveData() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(scheduleData));
+      }
+
+      function renderTable() {
+        tbody.innerHTML = "";
+        scheduleData.forEach((item, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+        <td data-label="序号">${index + 1}</td>
+        <td data-label="接受时间">${item.acceptDate}</td>
+        <td data-label="主要内容">${item.content}</td>
+        <td data-label="拍摄地点">${item.location}</td>
+        <td data-label="交稿日期">${item.deadline}</td>
+        <td data-label="收入">${item.income}</td>
+        <td><button class="delete-btn" onclick="deleteItem(${index})">删除</button></td>
+      `;
+          tbody.appendChild(row);
+        });
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const acceptDate = document.getElementById("acceptDate").value;
+        const content = document.getElementById("content").value;
+        const location = document.getElementById("location").value;
+        const deadline = document.getElementById("deadline").value;
+        const income = document.getElementById("income").value;
+
+        if (!acceptDate || !content || !location || !deadline || !income) {
+          alert("请填写所有字段！");
+          return;
         }
 
-        // 删除条目
-        function deleteItem(category, index) {
-            if (confirm('确定要删除这条记录吗？')) {
-                data[category].splice(index, 1);
-                saveData();
-                renderTable(category);
-            }
-        }
+        scheduleData.push({ acceptDate, content, location, deadline, income });
+        saveData();
+        renderTable();
 
-        // 渲染表格
-        function renderTable(category) {
-            const tbody = document.querySelector(`#${category} .data-body`);
-            tbody.innerHTML = data[category].map((item, index) => `
-                <tr>
-                    <td>${item.time}</td>
-                    <td>${item.content}</td>
-                    <td>
-                        <button class="delete-btn" 
-                                onclick="deleteItem('${category}', ${index})">
-                            删除
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+        form.reset();
+      });
 
-        // 保存数据
-        function saveData() {
-            localStorage.setItem('workData', JSON.stringify(data));
+      window.deleteItem = function (index) {
+        if (confirm("确定要删除这一项吗？")) {
+          scheduleData.splice(index, 1);
+          saveData();
+          renderTable();
         }
+      };
+
+      loadData();
     </script>
-</body>
+  </body>
 </html>
